@@ -1,5 +1,3 @@
-import clsx from 'clsx'
-import Balancer from 'react-wrap-balancer'
 import { CommandLineIcon, UserIcon } from '@heroicons/react/24/outline'
 
 // wrap Balancer to remove type errors :( - @TODO - fix this ugly hack

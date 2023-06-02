@@ -1,48 +1,60 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment } from "react";
 import { signOut } from "next-auth/react";
-import { LayoutDashboard, LogOut } from "lucide-react";
-import Popover from "@/components/shared/popover";
+import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid'
 import Image from "next/image";
+import { Menu, Transition } from '@headlessui/react'
 import { Session } from "next-auth";
+
+function classNames(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
+}
 
 export default function UserDropdown({ session }: { session: Session }) {
   const { email, image } = session?.user || {};
-  const [openPopover, setOpenPopover] = useState(false);
 
   if (!email) return null;
 
   return (
     <div className="relative inline-block text-left">
-      <Popover
-        content={
-          <div className="w-full rounded-md bg-white p-2 sm:w-56">
-            <button
-              className="relative flex w-full items-center justify-start space-x-2 rounded-md p-2 text-left text-sm transition-all duration-75 hover:bg-gray-100"
-              onClick={() => signOut()}
-            >
-              <LogOut className="h-4 w-4" />
-              <p className="text-sm">Logout</p>
-            </button>
-          </div>
-        }
-        align="end"
-        openPopover={openPopover}
-        setOpenPopover={setOpenPopover}
-      >
-        <button
-          onClick={() => setOpenPopover(!openPopover)}
-          className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-gray-300 transition-all duration-75 focus:outline-none active:scale-95 sm:h-9 sm:w-9"
+      <Menu as="div" className="relative ml-3">
+        <div>
+          <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+            <span className="sr-only">Open user menu</span>
+            <Image
+              alt={email}
+              src={image || `https://avatars.dicebear.com/api/micah/${email}.svg`}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          </Menu.Button>
+        </div>
+        <Transition
+          as={Fragment}
+          enter="transition ease-out duration-100"
+          enterFrom="transform opacity-0 scale-95"
+          enterTo="transform opacity-100 scale-100"
+          leave="transition ease-in duration-75"
+          leaveFrom="transform opacity-100 scale-100"
+          leaveTo="transform opacity-0 scale-95"
         >
-          <Image
-            alt={email}
-            src={image || `https://avatars.dicebear.com/api/micah/${email}.svg`}
-            width={40}
-            height={40}
-          />
-        </button>
-      </Popover>
+          <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Item>
+              {({ active }) => (
+                <button
+                  className={classNames(active ? 'bg-gray-100' : '', 'relative flex w-full items-center justify-start space-x-2 rounded-md p-2 text-sm text-gray-700')}
+                  onClick={() => signOut()}
+                >
+                  <ArrowRightOnRectangleIcon className="h-4 w-4" />
+                  <p className="text-sm">Sign out</p>
+                </button>
+              )}
+            </Menu.Item>
+          </Menu.Items>
+        </Transition>
+      </Menu>
     </div>
   );
 }
