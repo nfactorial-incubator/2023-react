@@ -13,7 +13,7 @@ export const initialMessages: ChatGPTMessage[] = [
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage, placeholder }: any) => (
+const InputMessage = ({ input, setInput, sendMessage }: any) => (
   <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent via-white to-white mt-6 flex clear-both">
     <div className="mx-2 my-4 flex-1 md:mx-4 md:my-[52px] lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative mx-2 flex flex-col rounded-md border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] sm:mx-4">
@@ -50,21 +50,19 @@ const InputMessage = ({ input, setInput, sendMessage, placeholder }: any) => (
   </div>
 )
 
-export default function Chat() {
+const useMessages = () => {
   const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
   const [isMessageStreaming, setIsMessageStreaming] = useState(false);
-  const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // send message to API /api/chat endpoint
-  const sendMessage = async (message: string) => {
+  const sendMessage = async (newMessage: string) => {
     setLoading(true)
+    setError(null)
     const newMessages = [
       ...messages,
-      { role: 'user', content: message } as ChatGPTMessage,
+      { role: 'user', content: newMessage } as ChatGPTMessage,
     ]
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
@@ -82,7 +80,9 @@ export default function Chat() {
     console.log('Edge function returned.')
 
     if (!response.ok) {
-      throw new Error(response.statusText)
+      setError(response.statusText)
+      setLoading(false)
+      return
     }
 
     // This data is a ReadableStream
@@ -90,6 +90,8 @@ export default function Chat() {
     if (!data) {
       return
     }
+
+    // This data is a ReadableStream
 
     setIsMessageStreaming(true)
 
@@ -116,6 +118,22 @@ export default function Chat() {
 
     setIsMessageStreaming(false)
   }
+
+  return {
+    messages,
+    isMessageStreaming,
+    loading,
+    error,
+    sendMessage,
+  }
+}
+
+export default function Chat() {
+  const [input, setInput] = useState('')
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const { messages, isMessageStreaming, loading, error, sendMessage } = useMessages()
 
   const handleScroll = () => {
     if (chatContainerRef.current) {
