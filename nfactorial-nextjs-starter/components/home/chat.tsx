@@ -158,7 +158,7 @@ export default function Chat() {
 
   useEffect(() => {
     throttledScrollDown()
-  }, [messages]);
+  }, [messages, throttledScrollDown]);
 
   return (
     <div className="flex-1 w-full border-zinc-100 bg-white overflow-hidden">
