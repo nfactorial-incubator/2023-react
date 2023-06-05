@@ -22,5 +22,9 @@ export async function GET() {
     question: question_data.question,
     category: question_data.category?.title || '',
     answer: question_data.answer,
+  }, {
+    headers: {
+      'Cache-Control': 'no-store'
+    }
   })
 }
