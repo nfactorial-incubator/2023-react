@@ -4,51 +4,106 @@ import { throttle } from '@/lib/throttle'
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { ChatLine, LoadingChatLine } from './chat-line'
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import cx from 'classnames'
+import { AcademicCapIcon } from '@heroicons/react/24/outline'
+import axios from 'axios'
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages = [
   {
     role: 'assistant',
-    content: 'Hi! I am a friendly AI assistant. Ask me anything!',
+    content: 'Hi! I am a Jeopardy expert. Fire away with trivia questions!',
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage }) => (
-  <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent via-white to-white mt-6 flex clear-both">
-    <div className="mx-2 my-4 flex-1 md:mx-4 md:my-[52px] lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
-      <div className="relative mx-2 flex flex-col rounded-md border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] sm:mx-4">
-        <input
-          aria-label="chat input"
-          required
-          className="m-0 w-full border-0 bg-transparent p-0 py-3 pl-4 pr-10 text-black"
-          placeholder="Type a message..."
-          value={input}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
+const InputMessage = ({ input, setInput, sendMessage, isStreaming }) => {
+  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false)
+  const [question, setQuestion] = useState(null)
+  const [questionError, setQuestionError] = useState(null)
+  const inputRef = useRef(null)
+
+  const inputHasText = input !== ''
+
+  const generateJeopardyQuestion = async () => {
+    setIsGeneratingQuestion(true)
+    setQuestionError(null)
+
+    try {
+      const res = await axios.get('/api/question')
+      if (!res.data) {
+        throw new Error('No question was found in the response.')
+      }
+      const question_data = res.data
+
+      setQuestion(question_data)
+      setInput(`The category is "${question_data.category}". ${question_data.question}`)
+    } catch (err) {
+      setQuestionError(err)
+    } finally {
+      setIsGeneratingQuestion(false)
+    }
+  }
+
+  useEffect(() => {
+    const input = inputRef?.current
+    if (question && input) {
+      input.focus()
+      input.setSelectionRange(input.value.length, input.value.length)
+    }
+  }, [question, inputRef])
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent via-white to-white flex flex-col items-center clear-both">
+      <button
+        className="mx-auto flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black text-sm hover:opacity-50 disabled:opacity-25"
+        onClick={generateJeopardyQuestion}
+        disabled={isGeneratingQuestion}
+      >
+        <div className="w-4 h-4">
+          <AcademicCapIcon />
+        </div> {'Generate a Jeopardy question for me'}
+      </button>
+      <div className="mx-2 my-4 flex-1 w-full md:mx-4 md:mb-[52px] lg:max-w-2xl xl:max-w-3xl">
+        <div className="relative mx-2 flex-1 flex-col rounded-md border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] sm:mx-4">
+          <input
+            ref={inputRef}
+            aria-label="chat input"
+            required
+            className="m-0 w-full border-0 bg-transparent p-0 py-3 pl-4 pr-12 text-black"
+            placeholder="Type a message..."
+            value={input}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                sendMessage(input)
+                setInput('')
+              }
+            }}
+            onChange={(e) => {
+              setInput(e.target.value)
+            }}
+            disabled={isGeneratingQuestion}
+          />
+          <button
+            className={cx(inputHasText && "bg-black hover:bg-neutral-800 hover:text-neutral-100", "absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 transition-colors")}
+            type="submit"
+            onClick={() => {
               sendMessage(input)
               setInput('')
+            }}
+            disabled={isStreaming || isGeneratingQuestion}
+          >
+            {isStreaming || isGeneratingQuestion
+              ? <div className="h-6 w-6 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
+              : <div className={cx(inputHasText && "text-white", "w-6 h-6")}>
+                <PaperAirplaneIcon />
+              </div>
             }
-          }}
-          onChange={(e) => {
-            setInput(e.target.value)
-          }}
-        />
-        <button
-          className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900"
-          type="submit"
-          onClick={() => {
-            sendMessage(input)
-            setInput('')
-          }}
-        >
-          <div className="w-6 h-6">
-            <PaperAirplaneIcon />
-          </div>
-        </button>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-)
+  )
+}
 
 const useMessages = () => {
   const [messages, setMessages] = useState(initialMessages)
@@ -181,6 +236,7 @@ export default function Chat() {
           input={input}
           setInput={setInput}
           sendMessage={sendMessage}
+          isStreaming={isMessageStreaming}
         />
       </div>
     </div>
