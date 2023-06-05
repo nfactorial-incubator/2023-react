@@ -5,7 +5,12 @@ import { NextResponse } from 'next/server'
  * Retrieves a random Jeopardy question
  */
 export async function GET() {
-  const res = await axios.get('https://jservice.io/api/random')
+  const res = await axios.get('https://jservice.io/api/random', {
+    headers: {
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Expires': '0'
+    }
+  })
 
   const question_data = res.data?.[0]
 
@@ -24,7 +29,8 @@ export async function GET() {
     answer: question_data.answer,
   }, {
     headers: {
-      'Cache-Control': 'no-store'
+      'Cache-Control': 'no-store, no-cache, must-revalidate',
+      'Expires': '0'
     }
   })
 }
