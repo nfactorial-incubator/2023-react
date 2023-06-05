@@ -80,7 +80,7 @@ With any new commits to the repo, Vercel will automatically re-deploy the new ve
 ### Code Quality
 
 - [Prettier](https://prettier.io/) – Opinionated code formatter for consistent code style
-- [ESLint](https://eslint.org/) – Pluggable linter for Next.js and TypeScript
+- [ESLint](https://eslint.org/) – Pluggable linter for Next.js
 
 ### Miscellaneous
 

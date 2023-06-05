@@ -1,15 +1,5 @@
 import { CommandLineIcon, UserIcon } from '@heroicons/react/24/outline'
 
-// wrap Balancer to remove type errors :( - @TODO - fix this ugly hack
-// const BalancerWrapper = (props: any) => <Balancer {...props} />
-
-type ChatGPTAgent = 'user' | 'system' | 'assistant'
-
-export interface ChatGPTMessage {
-  role: ChatGPTAgent
-  content: string
-}
-
 // loading placeholder animation for the chat line
 export const LoadingChatLine = () => (
   <div
@@ -27,7 +17,7 @@ export const LoadingChatLine = () => (
 )
 
 // util helper to convert new lines to <br /> tags
-const convertNewLines = (text: string) =>
+const convertNewLines = (text) =>
   text.split('\n').map((line, i) => (
     <span key={i}>
       {line}
@@ -35,7 +25,7 @@ const convertNewLines = (text: string) =>
     </span>
   ))
 
-export function ChatLine({ role = 'assistant', content, isStreaming }: ChatGPTMessage & { isStreaming: boolean }) {
+export function ChatLine({ role = 'assistant', content, isStreaming }) {
   if (!content) {
     return null
   }

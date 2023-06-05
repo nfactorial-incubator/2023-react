@@ -1,4 +1,4 @@
-export default function Google({ className }: { className: string }) {
+export default function Google({ className }) {
   return (
     <svg viewBox="0 0 100 100" className={className}>
       <linearGradient

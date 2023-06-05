@@ -1,8 +1,6 @@
 import { signIn } from "next-auth/react";
 import {
   useState,
-  Dispatch,
-  SetStateAction,
   useCallback,
   useMemo,
   Fragment
@@ -14,9 +12,6 @@ import { Dialog, Transition } from '@headlessui/react'
 const SignInModal = ({
   showSignInModal,
   setShowSignInModal,
-}: {
-  showSignInModal: boolean;
-  setShowSignInModal: Dispatch<SetStateAction<boolean>>;
 }) => {
   const [signInClicked, setSignInClicked] = useState(false);
 

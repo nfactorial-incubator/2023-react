@@ -1,4 +1,4 @@
-export default function Twitter({ className }: { className?: string }) {
+export default function Twitter({ className }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

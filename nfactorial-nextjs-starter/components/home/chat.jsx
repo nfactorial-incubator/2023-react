@@ -2,18 +2,18 @@
 
 import { throttle } from '@/lib/throttle'
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { type ChatGPTMessage, ChatLine, LoadingChatLine } from './chat-line'
+import { ChatLine, LoadingChatLine } from './chat-line'
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 
 // default first message to display in UI (not necessary to define the prompt)
-export const initialMessages: ChatGPTMessage[] = [
+export const initialMessages = [
   {
     role: 'assistant',
     content: 'Hi! I am a friendly AI assistant. Ask me anything!',
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage }: any) => (
+const InputMessage = ({ input, setInput, sendMessage }) => (
   <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent via-white to-white mt-6 flex clear-both">
     <div className="mx-2 my-4 flex-1 md:mx-4 md:my-[52px] lg:mx-auto lg:max-w-2xl xl:max-w-3xl">
       <div className="relative mx-2 flex flex-col rounded-md border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] sm:mx-4">
@@ -51,18 +51,18 @@ const InputMessage = ({ input, setInput, sendMessage }: any) => (
 )
 
 const useMessages = () => {
-  const [messages, setMessages] = useState<ChatGPTMessage[]>(initialMessages)
+  const [messages, setMessages] = useState(initialMessages)
   const [isMessageStreaming, setIsMessageStreaming] = useState(false);
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
 
   // send message to API /api/chat endpoint
-  const sendMessage = async (newMessage: string) => {
+  const sendMessage = async (newMessage) => {
     setLoading(true)
     setError(null)
     const newMessages = [
       ...messages,
-      { role: 'user', content: newMessage } as ChatGPTMessage,
+      { role: 'user', content: newMessage },
     ]
     setMessages(newMessages)
     const last10messages = newMessages.slice(-10) // remember last 10 messages
@@ -110,7 +110,7 @@ const useMessages = () => {
 
       setMessages([
         ...newMessages,
-        { role: 'assistant', content: lastMessage } as ChatGPTMessage,
+        { role: 'assistant', content: lastMessage },
       ])
 
       setLoading(false)
@@ -130,9 +130,9 @@ const useMessages = () => {
 
 export default function Chat() {
   const [input, setInput] = useState('')
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatContainerRef = useRef<HTMLDivElement>(null);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
+  const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
   const { messages, isMessageStreaming, loading, error, sendMessage } = useMessages()
 
   const handleScroll = () => {

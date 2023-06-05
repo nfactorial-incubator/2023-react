@@ -4,34 +4,13 @@ import {
   ReconnectInterval,
 } from 'eventsource-parser'
 
-export type ChatGPTAgent = 'user' | 'system' | 'assistant'
-
-export interface ChatGPTMessage {
-  role: ChatGPTAgent
-  content: string
-}
-
-export interface OpenAIStreamPayload {
-  model: string
-  messages: ChatGPTMessage[]
-  temperature: number
-  top_p: number
-  frequency_penalty: number
-  presence_penalty: number
-  max_tokens: number
-  stream: boolean
-  stop?: string[]
-  user?: string
-  n: number
-}
-
-export async function OpenAIStream(payload: OpenAIStreamPayload) {
+export async function OpenAIStream(payload) {
   const encoder = new TextEncoder()
   const decoder = new TextDecoder()
 
   let counter = 0
 
-  const requestHeaders: Record<string, string> = {
+  const requestHeaders = {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ''}`,
   }
@@ -49,7 +28,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
   const stream = new ReadableStream({
     async start(controller) {
       // callback
-      function onParse(event: ParsedEvent | ReconnectInterval) {
+      function onParse(event) {
         if (event.type === 'event') {
           const data = event.data
           // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
@@ -78,7 +57,7 @@ export async function OpenAIStream(payload: OpenAIStreamPayload) {
       // stream response (SSE) from OpenAI may be fragmented into multiple chunks
       // this ensures we properly read chunks and invoke an event for each SSE event stream
       const parser = createParser(onParse)
-      for await (const chunk of res.body as any) {
+      for await (const chunk of res.body) {
         parser.feed(decoder.decode(chunk))
       }
     },

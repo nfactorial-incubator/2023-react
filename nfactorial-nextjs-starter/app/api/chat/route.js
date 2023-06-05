@@ -1,4 +1,3 @@
-import { type ChatGPTMessage } from '@/components/home/chat-line'
 import { OpenAIStream, OpenAIStreamPayload } from '@/lib/OpenAIStream'
 import { NextResponse } from 'next/server'
 
@@ -9,10 +8,10 @@ if (!process.env.OPENAI_API_KEY) {
 
 export const runtime = 'edge';
 
-export async function POST(req: Request): Promise<Response> {
+export async function POST(req) {
   const body = await req.json()
 
-  const messages: ChatGPTMessage[] = [
+  const messages = [
     {
       role: 'system',
       content: `An AI assistant that is a Front-end expert in Next.js, React and Vercel have an inspiring and humorous conversation. 
@@ -27,7 +26,7 @@ export async function POST(req: Request): Promise<Response> {
   ]
   messages.push(...body?.messages)
 
-  const payload: OpenAIStreamPayload = {
+  const payload = {
     model: 'gpt-3.5-turbo',
     messages: messages,
     temperature: process.env.AI_TEMP ? parseFloat(process.env.AI_TEMP) : 0.7,

@@ -8,7 +8,7 @@ import { Menu, Transition } from '@headlessui/react'
 import { Session } from "next-auth";
 import cx from 'classnames'
 
-export default function UserDropdown({ session }: { session: Session }) {
+export default function UserDropdown({ session }) {
   const { email, image } = session?.user || {};
 
   if (!email) return null;
