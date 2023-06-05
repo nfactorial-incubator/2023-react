@@ -1,7 +1,5 @@
 import {
   createParser,
-  ParsedEvent,
-  ReconnectInterval,
 } from 'eventsource-parser'
 
 export async function OpenAIStream(payload) {
@@ -24,6 +22,10 @@ export async function OpenAIStream(payload) {
     method: 'POST',
     body: JSON.stringify(payload),
   })
+
+  if (!res.ok) {
+    throw new Error(res.statusText);
+  }
 
   const stream = new ReadableStream({
     async start(controller) {

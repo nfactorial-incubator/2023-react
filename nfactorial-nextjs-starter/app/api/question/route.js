@@ -10,7 +10,11 @@ export async function GET() {
   const question_data = res.data?.[0]
 
   if (!question_data) {
-    throw new Error('No question was found in the response.')
+    return NextResponse.json({
+      message: 'No question was found in the response.'
+    }, {
+      status: 500
+    })
   }
 
   return NextResponse.json({

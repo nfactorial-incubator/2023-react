@@ -7,6 +7,7 @@ import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import cx from 'classnames'
 import { AcademicCapIcon } from '@heroicons/react/24/outline'
 import axios from 'axios'
+import toast, { Toaster } from 'react-hot-toast'
 
 // default first message to display in UI (not necessary to define the prompt)
 export const initialMessages = [
@@ -16,13 +17,14 @@ export const initialMessages = [
   },
 ]
 
-const InputMessage = ({ input, setInput, sendMessage, isStreaming }) => {
+const InputMessage = ({ input, setInput, sendMessage, loading }) => {
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false)
   const [question, setQuestion] = useState(null)
   const [questionError, setQuestionError] = useState(null)
   const inputRef = useRef(null)
 
-  const inputHasText = input !== ''
+  const shouldShowLoadingIcon = loading || isGeneratingQuestion
+  const inputActive = input !== '' && !shouldShowLoadingIcon
 
   const generateJeopardyQuestion = async () => {
     setIsGeneratingQuestion(true)
@@ -38,7 +40,7 @@ const InputMessage = ({ input, setInput, sendMessage, isStreaming }) => {
       setQuestion(question_data)
       setInput(`The category is "${question_data.category}". ${question_data.question}`)
     } catch (err) {
-      setQuestionError(err)
+      setQuestionError(err.message)
     } finally {
       setIsGeneratingQuestion(false)
     }
@@ -51,6 +53,12 @@ const InputMessage = ({ input, setInput, sendMessage, isStreaming }) => {
       input.setSelectionRange(input.value.length, input.value.length)
     }
   }, [question, inputRef])
+
+  useEffect(() => {
+    if (questionError) {
+      toast.error(questionError)
+    }
+  }, [questionError])
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-b from-transparent via-white to-white flex flex-col items-center clear-both">
@@ -84,17 +92,20 @@ const InputMessage = ({ input, setInput, sendMessage, isStreaming }) => {
             disabled={isGeneratingQuestion}
           />
           <button
-            className={cx(inputHasText && "bg-black hover:bg-neutral-800 hover:text-neutral-100", "absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 transition-colors")}
+            className={cx(
+              shouldShowLoadingIcon && "hover:bg-inherit hover:text-inhert",
+              inputActive && "bg-black hover:bg-neutral-800 hover:text-neutral-100",
+              "absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 transition-colors")}
             type="submit"
             onClick={() => {
               sendMessage(input)
               setInput('')
             }}
-            disabled={isStreaming || isGeneratingQuestion}
+            disabled={shouldShowLoadingIcon}
           >
-            {isStreaming || isGeneratingQuestion
+            {shouldShowLoadingIcon
               ? <div className="h-6 w-6 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
-              : <div className={cx(inputHasText && "text-white", "w-6 h-6")}>
+              : <div className={cx(inputActive && "text-white", "w-6 h-6")}>
                 <PaperAirplaneIcon />
               </div>
             }
@@ -135,6 +146,7 @@ const useMessages = () => {
     console.log('Edge function returned.')
 
     if (!response.ok) {
+      console.log(response)
       setError(response.statusText)
       setLoading(false)
       return
@@ -215,6 +227,12 @@ export default function Chat() {
     throttledScrollDown()
   }, [messages, throttledScrollDown]);
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
   return (
     <div className="flex-1 w-full border-zinc-100 bg-white overflow-hidden">
       <div
@@ -236,9 +254,10 @@ export default function Chat() {
           input={input}
           setInput={setInput}
           sendMessage={sendMessage}
-          isStreaming={isMessageStreaming}
+          isLoading={loading || isMessageStreaming}
         />
       </div>
+      <Toaster />
     </div>
   )
 }
