@@ -6,10 +6,7 @@ import { ArrowRightOnRectangleIcon } from '@heroicons/react/20/solid'
 import Image from "next/image";
 import { Menu, Transition } from '@headlessui/react'
 import { Session } from "next-auth";
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
+import cx from 'classnames'
 
 export default function UserDropdown({ session }: { session: Session }) {
   const { email, image } = session?.user || {};
@@ -44,7 +41,7 @@ export default function UserDropdown({ session }: { session: Session }) {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  className={classNames(active ? 'bg-gray-100' : '', 'relative flex w-full items-center justify-start space-x-2 rounded-md p-2 text-sm text-gray-700')}
+                  className={cx(active ? 'bg-gray-100' : '', 'relative flex w-full items-center justify-start space-x-2 rounded-md p-2 text-sm text-gray-700')}
                   onClick={() => signOut()}
                 >
                   <ArrowRightOnRectangleIcon className="h-4 w-4" />
