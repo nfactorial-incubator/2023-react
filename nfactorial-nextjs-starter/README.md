@@ -62,8 +62,6 @@ With any new commits to the repo, Vercel will automatically re-deploy the new ve
 
 ***
 
-## Features
-
 ### Frameworks
 
 - [Next.js](https://nextjs.org/) – React framework for building performant apps with the best developer experience
