@@ -70,6 +70,9 @@ devDependencies:
   postcss:
     specifier: ^8.4.21
     version: 8.4.23
+  postcss-100vh-fix:
+    specifier: ^1.0.2
+    version: 1.0.2(postcss@8.4.23)
   prettier:
     specifier: ^2.8.2
     version: 2.8.8
@@ -2244,6 +2247,15 @@ packages:
   /pirates@4.0.5:
     resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /postcss-100vh-fix@1.0.2(postcss@8.4.23):
+    resolution: {integrity: sha512-t7vqk9AfjI4fXmWlQCEiMZFFhi1hro4WlECINI1TV6Qh1XapUJE++gCmNr95F5Hen/+bz1OmO+SiSB9TZmFmSg==}
+    engines: {node: '>=10.0'}
+    peerDependencies:
+      postcss: ^8.1.0
+    dependencies:
+      postcss: 8.4.23
     dev: true
 
   /postcss-import@15.1.0(postcss@8.4.23):
