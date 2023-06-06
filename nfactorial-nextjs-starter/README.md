@@ -18,7 +18,7 @@ Next, we can start our deployment to Vercel with the button below:
 
 3) In the `Configure Project` section, you'll see a list of environment variables we'll need to populate:
 
-* Create a Google OAuth app through the [instructions here](https://refine.dev/blog/nextauth-google-github-authentication-nextjs/#for-googleprovider-make-sure-you-have-a-google-account). For "Authorized redirect URIs", ignore the production URI for now. Paste the obtained Google Client ID to the `GOOGLE_CLIENT_ID` field, and the Google Client Secret to the `GOOGLE_CLIENT_SECRET` field.
+* Create a Google OAuth app through the [instructions here](https://refine.dev/blog/nextauth-google-github-authentication-nextjs/#for-googleprovider-make-sure-you-have-a-google-account). For "Authorized redirect URIs", ignore the production URI for now. Don't forget to publish the Google app in order for others to be able to sign-in. Paste the obtained Google Client ID to the `GOOGLE_CLIENT_ID` field, and the Google Client Secret to the `GOOGLE_CLIENT_SECRET` field. 
 * Populate the `NEXTAUTH_SECRET` field with a string you can [generate here](https://generate-secret.vercel.app/32).
 * Create an OpenAI API key through the [instructions here](https://www.howtogeek.com/885918/how-to-get-an-openai-api-key/). Save the generated API key somewhere safe, and paste it to the `OPENAI_API_KEY` field.
 
