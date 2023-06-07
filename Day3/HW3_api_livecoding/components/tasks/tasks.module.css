@@ -1,0 +1,75 @@
+/* TodoApp.module.css */
+.todoApp {
+  margin: 2rem auto 0 auto;
+  max-width: 400px;
+}
+
+.topPanel {
+  margin: 1rem 0;
+}
+
+/* App header */
+
+.appHeader {
+  align-items: flex-end;
+}
+
+.appHeader h1 {
+  flex-grow: 1;
+}
+
+.appHeader h2 {
+  font-size: 1.2rem;
+  color: grey;
+}
+
+/* Item add form */
+
+.itemAddForm {
+  margin-top: 1rem;
+}
+
+.itemAddForm input {
+  margin-right: 3px;
+}
+
+/* Search panel */
+
+.searchInput {
+  width: auto;
+  flex-grow: 1;
+  margin-right: 3px;
+}
+
+/* Todo list */
+
+.todoList .list-group-item {
+  padding: 0.25rem 0.75rem;
+}
+
+/* Todo list item */
+
+.todoListItem {
+  font-size: 1.25rem;
+}
+
+.todoListItem button {
+  width: 35px;
+  margin: 3px;
+}
+
+.todoListItemLabel {
+  margin-left: 1.25rem;
+  line-height: 35px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.todoListItem.done .todoListItemLabel {
+  text-decoration: line-through;
+}
+
+.todoListItem.important .todoListItemLabel {
+  font-weight: bold;
+  color: steelblue;
+}
